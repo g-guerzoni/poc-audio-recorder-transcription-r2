@@ -2,6 +2,10 @@
   "name": "poc-audio-recorder-transcription-r2",
   "version": "1.0.0",
   "main": "dist/main.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:g-guerzoni/poc-audio-recorder-transcription-r2.git"
+  },
   "scripts": {
     "start": "tsc && electron .",
     "build": "tsc",

@@ -2,6 +2,8 @@
 
 A **POC** using Electron that provides audio recording capabilities with integration to Cloudflare R2 storage and automatic transcription services. This application allows users to record audio, store it securely in Cloudflare R2, and automatically transcribe the content using OpenAI's Whisper model through a Cloudflare Worker.
 
+![image](https://github.com/user-attachments/assets/5ebcbca3-0b0d-43ed-8419-99b8ee77c733)
+
 ## Features
 
 - **Audio Recording**: Record high-quality audio from your computer's microphone

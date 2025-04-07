@@ -1,215 +1,215 @@
-# Audio Capture Electron Application
+# Audio Recorder with R2 Storage and Transcription
 
-This is an Electron application that captures audio from the user's microphone and uploads it to Cloudflare R2 storage. Uploaded files can be processed by a Cloudflare Worker.
+A **POC** using Electron that provides audio recording capabilities with integration to Cloudflare R2 storage and automatic transcription services. This application allows users to record audio, store it securely in Cloudflare R2, and automatically transcribe the content using OpenAI's Whisper model through a Cloudflare Worker.
+
+## Features
+
+- **Audio Recording**: Record high-quality audio from your computer's microphone
+- **Cloud Storage**: Automatic upload to Cloudflare R2 storage
+- **Transcription**: Automatic audio-to-text transcription using OpenAI's Whisper model
+- **History**: View and manage your recorded audio files
+- **Real-time Progress**: Live upload and transcription progress tracking
+- **Error Handling**: Robust error handling and user feedback
 
 ## Prerequisites
 
 - Node.js (>= 14.x)
-- npm
-- Cloudflare account with R2 and Workers enabled
+- npm or yarn
+- Cloudflare account with:
+  - R2 Storage enabled
+  - Workers enabled
+  - API tokens with appropriate permissions
 
 ## Installation
 
-1. Clone this repository
-2. Install dependencies:
+1. Clone the repository:
+
+   ```bash
+   git clone [repository-url]
+   cd poc-audio-recorder-transcription-r2
    ```
+
+2. Install dependencies:
+
+   ```bash
    npm install
+   ```
+
+3. Configure environment variables:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+4. Edit `.env` with your credentials (see Configuration section below)
+
+5. Build the application:
+
+   ```bash
+   npm run build
+   ```
+
+6. Start the application:
+   ```bash
+   npm start
    ```
 
 ## Configuration
 
-1. Create a Cloudflare R2 bucket
-2. Create R2 API tokens with appropriate permissions
-3. Create a `.env` file in the project root:
+### Environment Variables
 
-```bash
-# Copy the example file
-cp .env.example .env
+The following environment variables need to be set in your `.env` file:
 
-# Edit the .env file with your credentials
-nano .env
-```
+| Variable               | Description                                   | Required |
+| ---------------------- | --------------------------------------------- | -------- |
+| `R2_ACCOUNT_ID`        | Your Cloudflare account ID                    | Yes      |
+| `R2_ACCESS_KEY_ID`     | R2 API access key ID                          | Yes      |
+| `R2_SECRET_ACCESS_KEY` | R2 API secret access key                      | Yes      |
+| `R2_BUCKET_NAME`       | Name of your R2 bucket                        | Yes      |
+| `R2_FOLDER_NAME`       | Folder name within the bucket for audio files | Yes      |
+| `WORKER_URL`           | URL of your deployed Cloudflare Worker        | Yes      |
 
-4. Fill in your R2 credentials in the `.env` file:
+### Cloudflare Worker Configuration
 
-```
-R2_ACCOUNT_ID="your-cloudflare-account-id"
-R2_ACCESS_KEY_ID="your-r2-access-key-id"
-R2_SECRET_ACCESS_KEY="your-r2-secret-access-key"
-R2_BUCKET_NAME="your-r2-bucket-name"
-```
+The Worker requires additional configuration in the Cloudflare dashboard:
 
-The application uses dotenv to load these environment variables at runtime.
+1. Set the following environment variables in your Worker:
 
-## Development
+   - `OPENAI_API_KEY`: Your OpenAI API key for transcription
+   - `POC_AUDIO_RECORDER_TRANSCRIPTION_R2_FOLDER_NAME`: Folder name in R2 bucket
 
-Build the TypeScript code:
-```
-npm run build
-```
-
-Start the application:
-```
-npm start
-```
-
-Watch for changes during development:
-```
-npm run watch
-```
-
-### Hot Reloading
-
-For a better development experience with hot reloading:
-
-```bash
-# For macOS/Linux
-npm run dev
-
-# For Windows
-npm run dev:win
-```
-
-This will:
-1. Watch for changes in your TypeScript files and recompile them automatically
-2. Reload the Electron application when changes are detected
-3. Restart the application when necessary
-
-## Cloudflare Worker Deployment
-
-### Prerequisites
-
-1. A Cloudflare account with Workers and R2 enabled
-2. Cloudflare R2, Workers, and API Token permissions
-
-### Setting Up Cloudflare R2
-
-1. Log in to your Cloudflare dashboard
-2. Navigate to R2 > Create bucket
-3. Create a bucket named `audios` (or your preferred name)
-4. Note your bucket name for later configuration
-
-### Creating R2 API Tokens
-
-1. Go to your Cloudflare dashboard > Account Home > R2
-2. Click on "Manage R2 API Tokens"
-3. Create a new API token with the following permissions:
-   - "Object Read" - Allows reading objects from the bucket
-   - "Object Write" - Allows writing objects to the bucket
-   - "Bucket Read" - Allows reading bucket metadata
-   - "Bucket Write" - Allows creating and deleting buckets
-4. Note your Access Key ID and Secret Access Key
-5. Add these credentials to your `.env` file:
-   ```
-   R2_ACCOUNT_ID="your-cloudflare-account-id"
-   R2_ACCESS_KEY_ID="your-access-key-id"
-   R2_SECRET_ACCESS_KEY="your-secret-access-key"
-   R2_BUCKET_NAME="audios"
-   WORKER_URL="https://audio-processor-worker.your-account.workers.dev"
+2. Configure R2 bucket binding in `wrangler.toml`:
+   ```toml
+   [[r2_buckets]]
+   binding = "AUDIO_BUCKET"
+   bucket_name = "your-bucket-name"
    ```
 
-### Deploying the Worker
+## Worker Integration
 
-1. Install Wrangler CLI globally:
-   ```
-   npm install -g wrangler
-   ```
+The project includes a Cloudflare Worker that handles:
 
-2. Navigate to the worker directory:
-   ```
-   cd src/external/cloudflare/worker
-   ```
+1. **Audio Processing**: Receives uploaded audio files from the Electron app
+2. **Transcription**: Uses OpenAI's Whisper model to transcribe audio to text
+3. **Storage Management**: Stores transcription results back in R2
 
-3. Update the `wrangler.toml` file with your information:
-   - Replace the empty `account_id` with your Cloudflare account ID
-   - Replace the empty `bucket_name` with your R2 bucket name
-   - Replace the empty `bucket` in the triggers section with your bucket name
+### Worker Endpoints
 
-4. Login to Cloudflare:
-   ```
-   wrangler login
+- `/transcribe`: POST endpoint that accepts audio file keys and initiates transcription
+
+### Worker Deployment
+
+1. Navigate to the worker directory:
+
+   ```bash
+   cd external/cloudflare/worker
    ```
 
-5. Install worker dependencies:
-   ```
+2. Install worker dependencies:
+
+   ```bash
    npm install
    ```
 
-6. Deploy the worker:
-   ```
+3. Deploy the worker:
+
+   ```bash
    npm run deploy
    ```
 
-7. Test your worker locally before deployment (optional):
+4. Update your `.env` file with the deployed worker URL:
    ```
-   npm run dev
+   WORKER_URL=https://audio-processor-worker.[your-account].workers.dev
    ```
 
-### Using Direct Worker Notification
+## R2 Integration
 
-Since R2 event notifications require Cloudflare Queues (which may not be available on all accounts), our application uses a direct notification approach:
+The application uses Cloudflare R2 for secure and scalable storage of audio files. The integration includes:
 
-1. When audio is uploaded to R2, the Electron app directly calls the Worker's API endpoint
-2. The WORKER_URL environment variable in your .env file specifies the URL of your deployed Worker
-3. For this project, your worker URL is: `https://audio-processor-worker.guerzoni-guilherme.workers.dev`
+1. **Direct Upload**: Audio files are uploaded directly to R2 from the Electron app
+2. **Signed URLs**: Secure access to audio files using signed URLs
+3. **Folder Structure**:
+   - `/audio`: Raw audio recordings
+   - `/audio/transcriptions`: Transcription results
 
-If you want to use R2 event notifications instead (requires Enterprise plan or add-on):
+### R2 Setup
 
-1. Create a Cloudflare Queue: `wrangler queues create audio-events`
-2. Configure R2 notifications: `wrangler r2 bucket notification create audios --event-type=object-create --queue=audio-events`
-3. Set up your Worker to consume events from the queue
+1. Create a new R2 bucket in your Cloudflare dashboard
+2. Create API tokens with the following permissions:
+   - Object Read
+   - Object Write
+   - Bucket Read
+   - Bucket Write
+3. Configure the bucket name and credentials in your `.env` file
 
-### Verifying Worker Deployment
+## Development
 
-Once deployed, you can monitor your worker's activity:
+### Running in Development Mode
 
-1. In the Cloudflare dashboard, go to Workers & Pages > audio-processor-worker
-2. Navigate to Logs to view worker activity
-3. After uploading an audio file from the Electron application, you should see logs indicating that the worker processed the file
-4. You can also check your R2 bucket to see the uploaded audio files and any metadata files the worker might have created
+```bash
+# Start with hot reloading
+npm run dev
 
-### Testing the Complete Integration
-
-To test the full integration between your Electron app, R2, and Workers:
-
-1. Ensure your `.env` file contains all the necessary credentials
-2. Start the Electron application with `npm start`
-3. Click "Start Recording" to begin capturing audio
-4. Speak into your microphone for a few seconds
-5. Click "Stop Recording" to end the recording session
-6. The app will automatically upload the audio to your R2 bucket
-7. If you've set the `WORKER_URL` correctly, the app will also notify your worker about the uploaded file
-8. Check the Cloudflare Worker logs to verify that the worker processed the file
-9. Check your R2 bucket to see the uploaded audio files
-
-Troubleshooting tips:
-- If uploads fail, check your R2 credentials and permissions
-- If the worker isn't processing files, check the worker logs for errors
-- Enable developer tools in the Electron app (already enabled by default) to see console messages
-- Make sure your Cloudflare Worker is published and active
-
-## Building Distributable
-
-To build distributables for your platform:
+# Watch for TypeScript changes
+npm run watch
 ```
+
+### Building for Production
+
+```bash
+# Build the application
+npm run build
+
+# Create distributable
 npm run dist
 ```
 
-Output will be in the `release` folder.
+### Project Structure
 
-## Architecture
+```
+├── src/
+│   ├── main.ts              # Main Electron process
+│   ├── services/
+│   │   └── r2UploadService.ts  # R2 integration service
+│   └── config/
+│       └── config.ts        # Configuration management
+├── external/
+│   └── cloudflare/
+│       └── worker/          # Cloudflare Worker code
+└── dist/                    # Compiled files
+```
 
-- **Electron App**: Captures audio from the microphone in chunks
-- **R2 Storage Service**: Uploads audio chunks to Cloudflare R2
-- **Cloudflare Worker**: Processes audio files when uploaded to R2
+## Error Handling
 
-## Security Notes
+The application includes comprehensive error handling for:
 
-- In a production environment, never hard-code API keys or secrets
-- Use secure methods to store and retrieve credentials
-- Consider implementing additional authentication mechanisms
-- Encrypt sensitive data in transit and at rest
+- Network connectivity issues
+- R2 authentication failures
+- Worker communication errors
+- Transcription service errors
+- Invalid configurations
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Upload Failures**
+
+   - Check R2 credentials and permissions
+   - Verify network connectivity
+   - Ensure bucket exists and is accessible
+
+2. **Transcription Errors**
+
+   - Verify OpenAI API key in Worker configuration
+   - Check Worker logs for detailed error messages
+   - Ensure audio file format is supported
+
+3. **Worker Connection Issues**
+   - Verify Worker URL in `.env` file
+   - Check Worker deployment status
+   - Confirm Worker has necessary R2 permissions
 
 ## License
 
-[MIT](LICENSE)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

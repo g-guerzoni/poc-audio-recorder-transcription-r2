@@ -1,0 +1,40 @@
+{
+  "name": "poc-audio-recorder-transcription-r2",
+  "version": "1.0.0",
+  "main": "dist/main.js",
+  "scripts": {
+    "start": "tsc && electron .",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "dist": "electron-builder",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-electron": "node start-electron.js",
+    "dev": "NODE_ENV=development concurrently \"npm run watch\" \"nodemon\"",
+    "dev:win": "set NODE_ENV=development && concurrently \"npm run watch\" \"nodemon\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Electron app for audio capture with Cloudflare R2 integration",
+  "dependencies": {
+    "aws-sdk": "^2.1692.0",
+    "dotenv": "^16.4.7",
+    "electron": "^35.1.4",
+    "electron-builder": "^26.0.12",
+    "typescript": "^5.8.3",
+    "uuid": "^11.1.0"
+  },
+  "build": {
+    "appId": "com.electron.audio-recorder-r2",
+    "directories": {
+      "output": "release/"
+    }
+  },
+  "devDependencies": {
+    "@types/uuid": "^10.0.0",
+    "concurrently": "^9.1.2",
+    "electron-reload": "^2.0.0-alpha.1",
+    "nodemon": "^3.1.9"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Audio Capture Application</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';">
+    <link rel="stylesheet" href="global.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Audio Capture Application</h1>
+
+        <!-- Recording controls -->
+        <div>
+            <button id="startButton">Start Recording</button>
+            <button id="stopButton" disabled>Stop Recording</button>
+            <div id="recordingIndicator" class="hidden">
+                <span class="recording-dot"></span> Recording audio...
+            </div>
+        </div>
+
+        <!-- Status and upload indicator -->
+        <div id="status" class="hidden"></div>
+        <div id="uploadIndicator" class="hidden">
+            <div class="upload-status-row">
+                <div class="spinner"></div>
+                <div id="uploadStatus">Uploading audio...</div>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="progress-container">
+                <div id="uploadProgress" class="progress-bar"></div>
+            </div>
+
+            <!-- Upload stages visualization -->
+            <div class="upload-stages">
+                <div class="stages-line"></div>
+                <div id="stagesProgress" class="stages-progress"></div>
+
+                <div id="stagePrep" class="stage">
+                    <div class="stage-dot"></div>
+                    <div class="stage-text">Preparing</div>
+                </div>
+
+                <div id="stageUpload" class="stage">
+                    <div class="stage-dot"></div>
+                    <div class="stage-text">Uploading</div>
+                </div>
+
+                <div id="stageProcessing" class="stage">
+                    <div class="stage-dot"></div>
+                    <div class="stage-text">Processing</div>
+                </div>
+
+                <div id="stageComplete" class="stage">
+                    <div class="stage-dot"></div>
+                    <div class="stage-text">Complete</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audio history section -->
+        <h2>Recorded Audio History</h2>
+        <div id="audioHistory">
+            <div id="emptyHistory">No audio recordings found.</div>
+        </div>
+    </div>
+
+    <!-- Notification sound (hidden) -->
+    <audio id="notificationSound" preload="auto" style="display: none;">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2358/2358.wav" type="audio/mpeg">
+    </audio>
+
+    <script src="dist/renderer.js"></script>
+</body>
+</html>

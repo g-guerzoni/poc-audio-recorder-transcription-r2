@@ -1,0 +1,16 @@
+{
+  "name": "audio-processor-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for processing audio files uploaded to R2",
+  "main": "src/index.js",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^4.7.2"
+  }
+}

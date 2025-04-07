@@ -1,0 +1,20 @@
+name = "audio-processor-worker"
+main = "src/index.js"
+compatibility_date = "2024-04-06"
+
+# account_id = ""  # Cloudflare account ID
+workers_dev = true
+
+[build]
+command = ""
+
+[[r2_buckets]]
+binding = "AUDIO_BUCKET"
+bucket_name = "audios"
+preview_bucket_name = "audios"
+
+# R2 events are configured in the Cloudflare dashboard after deployment
+
+[vars]
+# POC_AUDIO_RECORDER_TRANSCRIPTION_R2_FOLDER_NAME = ""  # Folder name within the R2 bucket where audio files are stored
+# OPENAI_API_KEY = ""  # Uncomment and set this value in the Cloudflare dashboard

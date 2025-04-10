@@ -1,4 +1,4 @@
-# Audio Recorder with R2 Storage and Transcription
+# Audio Recorder with Transcription and R2 Storage
 
 A **POC** using Electron that provides audio recording capabilities with integration to Cloudflare R2 storage and automatic transcription services. This application allows users to record audio, store it securely in Cloudflare R2, and automatically transcribe the content using OpenAI's Whisper model through a Cloudflare Worker.
 
